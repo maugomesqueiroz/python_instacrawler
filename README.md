@@ -1,6 +1,6 @@
-# Istacrawler: Simple crawler for instagram using Python
+# Istacrawler: Simple crawler for Instagram using Python
 
-Instacrawler is a simple library designed to fetch information from Intagram website.
+Instacrawler is a simple library designed to fetch information from Instagram website.
 
 Key characteristics:
 * Can obtain follower, following and posts count
@@ -16,15 +16,6 @@ cd python_instacrawler
 ```
 
 ### Performing Login
-Asking for input from user:
-
-```python
-from src.crawler_pageobjects import InstagramLoginPage
-
-crawler = InstagramLoginPage()
-crawler.perform_login()
-```
-
 If we wish to provide login information:
 
 ```python
@@ -36,6 +27,38 @@ crawler = InstagramLoginPage()
 crawler.perform_login(login_info)
 ```
 
+Alternatively, if we don't pass any arguments to the perform_login method, it will ask for input from user.
+
+### Fetching account info
+```python
+
+from src.crawler_pageobjects import (
+    InstagramLoginPage,
+    InstagramAccountPage
+)
+
+login_info = {'username': 'MyUser', 'password': '12345'}
+
+crawler = InstagramLoginPage()
+crawler.perform_login(login_info)
+
+bill_gates_account = InstagramAccountPage(account_name='thisisbillgates', driver=crawler.driver)
+print('Account Info: ', bill_gates_account.get_account_info())
+```
+### Fetching postos info
+```python
+posts = bill_gates_account.get_posts_info(max_count=3)
+print('Posts \n', posts)
+```
+
+### Fetching comments from post
+```python
+
+post_page = InstagramPostPage(post_link=link, driver=bill_gates_account.driver)
+comments = post_page.get_comments(max_load_more_tries = 4, verbose=True)
+
+print(comments)
+```
 For additional information see [API Example](docs/API-EXAMPLE.md).
 
 ## Documentation
