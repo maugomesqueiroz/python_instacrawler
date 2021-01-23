@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+# this module contains the wrappers
+# used for the crawler
+
 import time
 
 def retry_this_if_error(max_attempts: int = 2):

@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+# this module contains the custom error
+# classes for ther crawler
+ 
 class LoginError(Exception):
     """Exception raised if login information causes alert message in instagram
     login page.

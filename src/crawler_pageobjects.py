@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # this module contains the POM (Page Object Model) classes
 # for the each page we want to crawl in
+
 import os
 import re 
 import time
@@ -47,6 +48,8 @@ class WebPage(ABC):
 
     Keyword arguments:
     webdriver -- Needs input driver that is being used.
+    network_conditions -- tuple containing network conditions 
+        used for testing.
     """
 
     def __init__(self, driver=None, network_conditions: tuple = None):
@@ -65,7 +68,6 @@ class WebPage(ABC):
         else:
             self.driver = driver
 
-
         if network_conditions:
             off, lat, dw_thr, up_thr = network_conditions
             self.driver.set_network_conditions(
@@ -75,9 +77,13 @@ class WebPage(ABC):
                 upload_throughput = up_thr
                 )
 
+
     def start(self, url: str=''):
         """Starts a Chrome driver for this WebPage, fetches url provided,
         switches to window and maximizes it.
+
+        Keyword arguments:
+        url -- site that the driver should go to, defaults to empty string.
         """
         self.driver.get(url)
         self.main_window = self.driver.current_window_handle
@@ -87,10 +93,23 @@ class WebPage(ABC):
 
 
     def save_cookies(self, filename: str = 'cookies.pkl'):
+        '''Saves the session cookies to a file. 
+
+        Keyword arguments:
+        filename -- output filename, defaults to 'cookies.pkl'
+        '''
         cookies = self.driver.get_cookies()
         pickle.dump(cookies, open("cookies.pkl","wb"))
 
+
     def load_cookies(self, filename: str = 'cookies.pkl') -> bool:
+        '''Loads cookies from a file. Returns True if successful, 
+        False if not.
+
+        Keyword arguments:
+        filename -- input filename, defaults to 'cookies.pkl'
+        '''
+
         try:
             cookies = pickle.load(open("cookies.pkl", "rb"))
             for cookie in cookies:
@@ -101,16 +120,32 @@ class WebPage(ABC):
             return False
 
 
-    def find_element(self, locator: tuple):
+    def find_element(self, locator: tuple) -> WebElement:
+        '''Finds an element in page. Returns it as a WebElement.
+
+        Keyword arguments:
+        locator -- a locator tuple
+        '''
         return self.driver.find_element(*locator)
 
-    def find_elements(self, locator: tuple):
+
+    def find_elements(self, locator: tuple) -> list:
+        '''Finds elements in page. Returns it as a list of WebElements.
+
+        Keyword arguments:
+        locator -- a locator tuple
+        '''
         return self.driver.find_elements(*locator)
 
-    def write_text(self, locator: tuple, text: str, clear_field_before: bool = False):
+    def write_text(self, locator: tuple, text: str, clear_field_before: bool = False) -> WebElement:
+        '''Writes a text to an element in page.
+
+        Keyword arguments:
+        locator -- a locator tuple.
+        text -- text str that should be written.
+        clear_field_before -- should the field be cleared before input text?
         '''
-        #TODO:doc
-        '''
+
         element = self.driver.find_element(*locator)
         if clear_field_before:
             element.send_keys(Keys.CONTROL + "a")
@@ -120,6 +155,11 @@ class WebPage(ABC):
         return element
 
     def get_text(self, locator: tuple):
+        '''Fetches a text from an element in page.
+
+        Keyword arguments:
+        locator -- a locator tuple.
+        '''
         try:
             return self.driver.find_element(*locator).text
         except:
@@ -129,9 +169,11 @@ class WebPage(ABC):
     def scroll_to_element(self, locator: tuple = None, element: WebElement = None) -> WebElement:
         ''' Scroll to element using selenium Action Chains.
         Moves mouse to element, causing the page to scroll to it.
+        Input can be in form of an element or a locator.
 
         Keyword arguments:
         locator -- locator of element to scroll to
+        element -- element to scroll to
         '''
 
         if locator:
@@ -145,22 +187,6 @@ class WebPage(ABC):
         action.move_to_element(source).perform()
 
         return source
-
-
-    def wait_locator(self, locator: tuple, max_time: int = 10):
-        return WebDriverWait(self.driver, max_time).until(
-                EC.presence_of_element_located(locator)  
-            )
-
-    def wait_to_be_clickable(self, locator: tuple, max_time: int = 10):
-        return WebDriverWait(self.driver, max_time).until(
-                EC.element_to_be_clickable(locator)  
-            )
-
-    def wait_text(self, locator: tuple, text, max_time: int = 10):
-        return WebDriverWait(self.driver, max_time).until(
-                EC.text_to_be_present_in_element(locator, text)  
-            )
 
 
 class InstagramLoginPage(WebPage):
@@ -242,8 +268,8 @@ class InstagramAccountPage(WebPage):
 
 
     def get_account_info(self) -> dict:
-        '''
-        #TODO: This docstring
+        ''' Fetches account information (name, followers, following)
+        as a dict.
         '''
 
         name = self.find_element(AccountPage.NAME).text
