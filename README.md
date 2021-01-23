@@ -34,7 +34,8 @@ Alternatively, if we don't pass any arguments to the perform_login method, it wi
 
 from src.crawler_pageobjects import (
     InstagramLoginPage,
-    InstagramAccountPage
+    InstagramAccountPage,
+    InstagramPostPage
 )
 
 login_info = {'username': 'MyUser', 'password': '12345'}
@@ -45,7 +46,7 @@ crawler.perform_login(login_info)
 bill_gates_account = InstagramAccountPage(account_name='thisisbillgates', driver=crawler.driver)
 print('Account Info: ', bill_gates_account.get_account_info())
 ```
-### Fetching postos info
+### Fetching posts info
 ```python
 posts = bill_gates_account.get_posts_info(max_count=3)
 print('Posts \n', posts)
@@ -53,9 +54,10 @@ print('Posts \n', posts)
 
 ### Fetching comments from post
 ```python
+link = 'https://www.instagram.com/p/B6JfheogQWK/'
 
 post_page = InstagramPostPage(post_link=link, driver=bill_gates_account.driver)
-comments = post_page.get_comments(max_load_more_tries = 4, verbose=True)
+comments = post_page.get_comments(verbose=True)
 
 print(comments)
 ```
