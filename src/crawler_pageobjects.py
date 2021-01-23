@@ -59,7 +59,7 @@ class WebPage(ABC):
             self.chromeOptions.add_argument('--hide-scrollbars')
             self.chromeOptions.add_argument('--disable-gpu')
             self.chromeOptions.add_argument("--log-level=3")
-            self.chromeOptions.add_argument("--incognito")
+            # self.chromeOptions.add_argument("--incognito")
             self.chromeOptions.add_argument("--disable-plugins-discovery")
             self.chromeOptions.add_argument("--start-maximized")
 
@@ -188,6 +188,18 @@ class WebPage(ABC):
 
         return source
 
+    def wait_locator(self, locator: tuple, max_time: int = 10):
+        '''Waits for locator to show up
+
+        Keyword arguments:
+        locator -- locator of element to wait
+        max_time -- maximum time to wait for locator, defaults to 10 seconds
+        '''
+        
+        return WebDriverWait(self.driver, max_time).until(
+                EC.presence_of_element_located(locator)  
+            )
+
 
 class InstagramLoginPage(WebPage):
     """ Instagram Login Page methods.
@@ -314,7 +326,12 @@ class InstagramAccountPage(WebPage):
                     focused_post = self.scroll_to_element(element=post)
 
                     likes_and_comments = focused_post.find_elements_by_xpath(AccountPage.LIKES_COMMENTS_FROM_POSTS)
-                    likes, comments = [element.text for element in likes_and_comments]
+
+                    try:
+                        likes, comments = [element.text for element in likes_and_comments]
+                    except ValueError:
+                        likes = [element.text for element in likes_and_comments]
+                        comments = 0
 
                     post_info_list.append((link, likes, comments))
                     visited_list.append(post)
