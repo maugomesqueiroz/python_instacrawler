@@ -1,4 +1,4 @@
-# Istacrawler: Simple crawler for Instagram using Python
+# Instacrawler: Simple crawler for Instagram using Python
 
 Instacrawler is a simple library designed to fetch information from Instagram website.
 
