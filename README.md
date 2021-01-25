@@ -9,10 +9,11 @@ Key characteristics:
 * Written using Selenium
 
 ## Quick Start
-### Getting the sources
+### Getting the Source Code and Requirements
 ```bash
 git clone https://github.com/maugomesqueiroz/python_instacrawler.git
-cd python_instacrawler 
+cd python_instacrawler
+pip install -r requirements.txt
 ```
 
 ### Performing Login
